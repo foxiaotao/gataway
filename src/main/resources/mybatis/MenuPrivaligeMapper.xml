@@ -1,0 +1,350 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="simon.demo.core.dao.MenuPrivaligeMapper" >
+  <resultMap id="BaseResultMap" type="simon.demo.core.bean.MenuPrivalige" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="url" property="url" jdbcType="VARCHAR" />
+    <result column="parentid" property="parentid" jdbcType="BIGINT" />
+    <result column="inner_order" property="innerOrder" jdbcType="VARCHAR" />
+    <result column="icon" property="icon" jdbcType="VARCHAR" />
+    <result column="menu_type" property="menuType" jdbcType="VARCHAR" />
+    <result column="isDelete" property="isdelete" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Example_Where_Clause_Page" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    menu_pri.id, menu_pri.name, menu_pri.url, menu_pri.parentid, menu_pri.inner_order, 
+    menu_pri.icon, menu_pri.menu_type, menu_pri.isDelete
+  </sql>
+  <select id="selectAll" resultMap="BaseResultMap" >
+    select id, name, url, parentid, inner_order, icon, menu_type, isDelete
+    from menu_pri
+  </select>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="simon.demo.core.bean.MenuPrivaligeExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from menu_pri
+    <if test="join != null" >
+      ${join}
+    </if>
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByExampleWithPage" resultMap="BaseResultMap" parameterType="map" >
+    select 
+    <if test="example.distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from menu_pri
+    <if test="example.join != null" >
+      ${example.join}
+    </if>
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause_Page" />
+    </if>
+    <if test="example.orderByClause != null" >
+      order by ${example.orderByClause}
+    </if>
+    limit ${startPage},${rows}
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from menu_pri
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from menu_pri
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <delete id="deleteByExample" parameterType="simon.demo.core.bean.MenuPrivaligeExample" >
+    delete from menu_pri
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="simon.demo.core.bean.MenuPrivalige" >
+    insert into menu_pri (id, name, url, 
+      parentid, inner_order, icon, 
+      menu_type, isDelete)
+    values (#{id,jdbcType=BIGINT}, #{name,jdbcType=VARCHAR}, #{url,jdbcType=VARCHAR}, 
+      #{parentid,jdbcType=BIGINT}, #{innerOrder,jdbcType=VARCHAR}, #{icon,jdbcType=VARCHAR}, 
+      #{menuType,jdbcType=VARCHAR}, #{isdelete,jdbcType=VARCHAR})
+  </insert>
+  <insert id="batchInsert" parameterType="java.util.List" >
+    insert into menu_pri (id, name, url, 
+      parentid, inner_order, icon, 
+      menu_type, isDelete)
+    <foreach collection="list"  item="item"  index="index" separator="union all">
+    (select #{item.id,jdbcType=BIGINT}, #{item.name,jdbcType=VARCHAR}, #{item.url,jdbcType=VARCHAR}, 
+      #{item.parentid,jdbcType=BIGINT}, #{item.innerOrder,jdbcType=VARCHAR}, #{item.icon,jdbcType=VARCHAR}, 
+      #{item.menuType,jdbcType=VARCHAR}, #{item.isdelete,jdbcType=VARCHAR} from dual)
+    </foreach>
+  </insert>
+  <insert id="insertSelective" parameterType="simon.demo.core.bean.MenuPrivalige" >
+    insert into menu_pri
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="name != null" >
+        name,
+      </if>
+      <if test="url != null" >
+        url,
+      </if>
+      <if test="parentid != null" >
+        parentid,
+      </if>
+      <if test="innerOrder != null" >
+        inner_order,
+      </if>
+      <if test="icon != null" >
+        icon,
+      </if>
+      <if test="menuType != null" >
+        menu_type,
+      </if>
+      <if test="isdelete != null" >
+        isDelete,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="name != null" >
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="url != null" >
+        #{url,jdbcType=VARCHAR},
+      </if>
+      <if test="parentid != null" >
+        #{parentid,jdbcType=BIGINT},
+      </if>
+      <if test="innerOrder != null" >
+        #{innerOrder,jdbcType=VARCHAR},
+      </if>
+      <if test="icon != null" >
+        #{icon,jdbcType=VARCHAR},
+      </if>
+      <if test="menuType != null" >
+        #{menuType,jdbcType=VARCHAR},
+      </if>
+      <if test="isdelete != null" >
+        #{isdelete,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="simon.demo.core.bean.MenuPrivaligeExample" resultType="java.lang.Integer" >
+    select count(*) from menu_pri
+    <if test="join != null" >
+      ${join}
+    </if>
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <select id="countAll" resultType="java.lang.Integer" >
+    select count(*) from menu_pri
+    <if test="join != null" >
+      ${join}
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update menu_pri
+    <set >
+      <if test="record.id != null" >
+        id = #{record.id,jdbcType=BIGINT},
+      </if>
+      <if test="record.name != null" >
+        name = #{record.name,jdbcType=VARCHAR},
+      </if>
+      <if test="record.url != null" >
+        url = #{record.url,jdbcType=VARCHAR},
+      </if>
+      <if test="record.parentid != null" >
+        parentid = #{record.parentid,jdbcType=BIGINT},
+      </if>
+      <if test="record.innerOrder != null" >
+        inner_order = #{record.innerOrder,jdbcType=VARCHAR},
+      </if>
+      <if test="record.icon != null" >
+        icon = #{record.icon,jdbcType=VARCHAR},
+      </if>
+      <if test="record.menuType != null" >
+        menu_type = #{record.menuType,jdbcType=VARCHAR},
+      </if>
+      <if test="record.isdelete != null" >
+        isDelete = #{record.isdelete,jdbcType=VARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update menu_pri
+    set id = #{record.id,jdbcType=BIGINT},
+      name = #{record.name,jdbcType=VARCHAR},
+      url = #{record.url,jdbcType=VARCHAR},
+      parentid = #{record.parentid,jdbcType=BIGINT},
+      inner_order = #{record.innerOrder,jdbcType=VARCHAR},
+      icon = #{record.icon,jdbcType=VARCHAR},
+      menu_type = #{record.menuType,jdbcType=VARCHAR},
+      isDelete = #{record.isdelete,jdbcType=VARCHAR}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="simon.demo.core.bean.MenuPrivalige" >
+    update menu_pri
+    <set >
+      <if test="name != null" >
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="url != null" >
+        url = #{url,jdbcType=VARCHAR},
+      </if>
+      <if test="parentid != null" >
+        parentid = #{parentid,jdbcType=BIGINT},
+      </if>
+      <if test="innerOrder != null" >
+        inner_order = #{innerOrder,jdbcType=VARCHAR},
+      </if>
+      <if test="icon != null" >
+        icon = #{icon,jdbcType=VARCHAR},
+      </if>
+      <if test="menuType != null" >
+        menu_type = #{menuType,jdbcType=VARCHAR},
+      </if>
+      <if test="isdelete != null" >
+        isDelete = #{isdelete,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="simon.demo.core.bean.MenuPrivalige" >
+    update menu_pri
+    set name = #{name,jdbcType=VARCHAR},
+      url = #{url,jdbcType=VARCHAR},
+      parentid = #{parentid,jdbcType=BIGINT},
+      inner_order = #{innerOrder,jdbcType=VARCHAR},
+      icon = #{icon,jdbcType=VARCHAR},
+      menu_type = #{menuType,jdbcType=VARCHAR},
+      isDelete = #{isdelete,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  
+  <select id="selectAllMenu" parameterType="simon.demo.core.shiro.ShiroUser" resultMap="BaseResultMap">
+  	SELECT DISTINCT
+		me.*
+	FROM
+		lnk_role_menuPri lrm
+	LEFT JOIN (
+		SELECT
+			r.rid,us.id as userid
+		FROM
+			lnk_user_role ur
+		LEFT JOIN s_user us ON ur.uid = us.id
+		LEFT JOIN role r ON ur.rid = r.rid
+		where ur.uid = ${id}
+	) u_left_r ON lrm.rid = u_left_r.rid
+	LEFT JOIN menu_pri me ON lrm.mid = me.id
+	where me.menu_type = 1
+  </select>
+</mapper>
