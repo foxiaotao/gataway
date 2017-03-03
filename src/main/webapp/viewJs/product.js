@@ -82,6 +82,12 @@ $(function() {
 				}
 				deleteSubmit(selections);
 			}
+		}, '-' ,{
+			text : '导出',
+			iconCls : 'icon-remove',
+			handler : function() {
+				window.open($("#ctxHiidenId").val() + "/poi/export.do","export");
+			}
 		}, '-' ],
 		onLoadSuccess : function() {
 			$('#dataTable').datagrid('clearSelections'); // 一定要加上这一句，要不然datagrid会记住之前的选择状态，删除时会出问题

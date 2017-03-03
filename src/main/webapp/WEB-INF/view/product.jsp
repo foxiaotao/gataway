@@ -15,7 +15,7 @@
 	 <form id="queryForm" style="margin:10;text-align: center;">  
         <table width="100%">  
             <tr>  
-            <td>名字：<input name="product" style="width: 200"></td>  
+            <td>名字p：<input name="product" style="width: 200"></td>  
             <td>属性：<input name="attr" style="width: 200"></td>  
 <!--             <td>属性：<input class="easyui-numberspinner" name="attr" min="1" max="120" increment="1" style="width:200px;"></input></td>   -->
             <td align="center"><a href="#" onclick="clearForm();" class="easyui-linkbutton" iconCls="icon-search">清空</a></td>  

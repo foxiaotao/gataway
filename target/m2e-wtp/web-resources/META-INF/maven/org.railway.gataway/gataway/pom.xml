@@ -8,21 +8,23 @@
   <name>gataway Maven Webapp</name>
   <url>http://maven.apache.org</url>
   
-<!--     <repositories> -->
-<!--         <repository> -->
-<!--             <id>nexus</id> -->
-<!--             <name>Team Nexus Repository</name> -->
-<!--             <url>http://10.1.132.117:8081/nexus/content/groups/public</url> -->
-<!--         </repository> --> 
-<!--     </repositories> -->
-<!--     <pluginRepositories> -->
-<!--         <pluginRepository> -->
-<!--             <id>nexus</id> -->
-<!--             <name>Team Nexus Repository</name> -->
-<!--             <url>http://10.1.132.117:8081/nexus/content/groups/public</url> -->
-<!--         </pluginRepository> -->
-<!--     </pluginRepositories> -->
-    
+<!--   http://maven.aliyun.com/nexus/content/groups/public/ -->
+
+	<repositories>
+        <repository>
+            <id>alimaven</id>
+            <name>aliyun mave</name>
+            <url>http://maven.aliyun.com/nexus/content/groups/public/</url>
+        </repository> 
+    </repositories>
+    <pluginRepositories>
+        <pluginRepository>
+            <id>alimaven</id>
+            <name>aliyun mave</name>
+            <url>http://maven.aliyun.com/nexus/content/groups/public/</url>
+        </pluginRepository>
+    </pluginRepositories>
+
  	<properties>
 		<org.springframework.version>4.1.5.RELEASE</org.springframework.version>
 	</properties>
@@ -218,11 +220,22 @@
             <version>2.3</version>
 		</dependency>
 		<!-- GENERAL UTILS end -->
+		<dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>fastjson</artifactId>
+            <version>1.1.42</version>
+        </dependency>
 <!-- 		<dependency> -->
-<!--             <groupId>com.alibaba</groupId> -->
-<!--             <artifactId>fastjson</artifactId> -->
-<!--             <version>1.1.42</version> -->
-<!--         </dependency> -->
+<!-- 				<groupId>json</groupId> -->
+<!-- 	            <artifactId>json</artifactId> -->
+<!-- 	            <version>2.2.1</version> -->
+<!-- 	            <scope>system</scope> -->
+<!-- 		</dependency> -->
+		<dependency>
+		    <groupId>com.google.code.gson</groupId>
+		    <artifactId>gson</artifactId>
+		    <version>2.2.4</version>
+		</dependency>
 		<dependency>
 		    <groupId>com.fasterxml.jackson.core</groupId>
 		    <artifactId>jackson-databind</artifactId>
