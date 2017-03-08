@@ -59,5 +59,9 @@ public class ProductServiceImpl implements ProductService {
         return productMapper.updateByPrimaryKeySelective(record);
     }
 
+	public List<Product> selectAll() {
+		return productMapper.selectAll();
+	}
+
 
 }

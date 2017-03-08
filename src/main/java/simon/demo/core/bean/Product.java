@@ -1,5 +1,7 @@
 package simon.demo.core.bean;
 
+import java.util.Date;
+
 public class Product {
     private String id;
 
@@ -10,8 +12,18 @@ public class Product {
     private String attr;
 
     private String status;
+    
+    private Date updateTime;
 
-    public String getId() {
+    public Date getUpdateTime() {
+		return updateTime;
+	}
+
+	public void setUpdateTime(Date updateTime) {
+		this.updateTime = updateTime;
+	}
+
+	public String getId() {
         return id;
     }
 
