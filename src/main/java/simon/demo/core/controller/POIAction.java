@@ -1,14 +1,19 @@
 package simon.demo.core.controller;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -16,6 +21,8 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.web.subject.WebSubject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -25,21 +32,23 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.alibaba.fastjson.JSONArray;
-import com.fasterxml.jackson.databind.jsonFormatVisitors.JsonArrayFormatVisitor;
-
 import simon.demo.core.bean.Product;
-import simon.demo.core.bean.User;
 import simon.demo.core.service.ProductService;
-import simon.demo.core.service.UserService;
+import simon.demo.core.util.ExcelByModelUtil;
 import simon.demo.core.util.excel.ADDRFHistoryExcelExportor;
 import simon.demo.core.util.excel.AbstractExcelExportor;
+
+import com.alibaba.fastjson.JSONArray;
 
 @Controller
 @RequestMapping(value="/poi")
 public class POIAction {
 	
 	Logger logger = Logger.getLogger(POIAction.class);
+	
+	@Autowired  
+	HttpServletRequest request; //这里可以获取到request
+	
 	
 	@Autowired
     ProductService productServiceImpl;
@@ -68,6 +77,7 @@ public class POIAction {
     public void export(HttpServletRequest request,HttpServletResponse response) throws Exception {
     	logger.error("【导出log】");
     	OutputStream os = null;  
+    	
     	Workbook wb = null;  
     	List<Product> selectAll;
 		try {
@@ -219,5 +229,122 @@ public class POIAction {
     		logger.error(e.getMessage());
     		return new ResponseEntity<byte[]>(HttpStatus.BAD_REQUEST);
     	}
+    }
+    
+    @RequestMapping(value="exportModelMap.do")
+    public ResponseEntity<byte[]> exportModelMap(){
+    	ServletRequest request = ((WebSubject)SecurityUtils.getSubject()).getServletRequest();   
+    	HttpSession httpSession = ((HttpServletRequest)request).getSession();   
+    	logger.debug("httpSession.getServletContext():"+httpSession.getServletContext());  
+    	String basePath = httpSession.getServletContext().getRealPath("/WEB-INF");
+    	String filePath = basePath+"/excelModel/ZZSScottareModel.xls";
+    	
+    	//data
+    	//封装整个excel所需数据,key为sheet名字,String
+		Map<String,Map<Integer,Map<Integer,String>>> fieldData = new HashMap<String, Map<Integer,Map<Integer,String>>>();
+		//封装一个sheet的数据,key为数据row行序号,int
+		Map<Integer,Map<Integer,String>> rowMap = null;
+		//封装一行的数据,key为cell列序号,int
+		//Map<Integer,String> cellMap = null;
+		
+		//sheet1 部分
+		rowMap = new HashMap<Integer, Map<Integer,String>>();	//实例化sheet1-rowMap
+		//sheet1
+		//rowMap:key=0,value:第0行的数据
+		rowMap.put(0, ExcelByModelUtil.fillCellMapData(new Integer[]{0},new String[]{"附件1 值 税 纳 增  税  申 报 表2"}));
+		//rowMap:key=3,value:第3行的数据
+		rowMap.put(3, ExcelByModelUtil.fillCellMapData(new Integer[]{0,17,31},new String[]{"税款所属时间：自2016 ","填表日期： 2016 年 12  月  30  日","金额单位：10000.00元 至角分"}));
+		//rowMap:key=4,value:第3行的数据
+		rowMap.put(4, ExcelByModelUtil.fillCellMapData(new Integer[]{0,5,27},new String[]{"税款所属时间：自2015 ","填表日期： 2015 年 12  月  30  日","金额单位：10000.01元 至角分"}));
+		
+		fieldData.put("首页", rowMap);//sheet1数据加入map中
+		
+		//sheet2部分
+		rowMap = new HashMap<Integer, Map<Integer,String>>();	//实例化sheet2-rowMap
+		//rowMap:key=3,value:第3行的数据
+		rowMap.put(3, ExcelByModelUtil.fillCellMapData(new Integer[]{0,16,31},new String[]{"税款所属时间：自2015 ","填表日期： 2015 年 12  月  30  日","金额单位：10000.01元 至角分"}));
+		//rowMap:key=4,value:第3行的数据
+		rowMap.put(4, ExcelByModelUtil.fillCellMapData(new Integer[]{0,5,27},new String[]{"纳税人识别号2","业务系统的标识2","所属行业：2"}));
+		//sheet2
+		fieldData.put("Sheet2", rowMap);
+    	//data
+    	
+    	try {
+			File f = new File(filePath);
+			if(!f.exists()){
+				logger.error("文件路径不存在");
+				return null;
+			}
+		} catch (Exception e1) {
+			logger.error("文件路径不存在");
+			return null;
+		}
+    	ExcelByModelUtil excel = new ExcelByModelUtil();
+    	excel.setModelPath(filePath).writeDataByMap(fieldData);
+    	
+    	HttpHeaders header = new HttpHeaders();
+    	try {
+			header.setContentDispositionFormData("attachment", new String("增值税.xls".getBytes("UTF-8"),"ISO8859-1"));
+		} catch (UnsupportedEncodingException e) {
+			logger.error(e.getMessage());
+		}
+    	header.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+    	return new ResponseEntity<byte[]>(excel.toByteArray(),header,HttpStatus.CREATED);
+    }
+    @RequestMapping(value="exportModelList.do")
+    public ResponseEntity<byte[]> exportModelList(){
+    	ServletRequest request = ((WebSubject)SecurityUtils.getSubject()).getServletRequest();   
+    	HttpSession httpSession = ((HttpServletRequest)request).getSession();   
+    	logger.debug("httpSession.getServletContext():"+httpSession.getServletContext());  
+    	String basePath = httpSession.getServletContext().getRealPath("/WEB-INF");
+    	String filePath = basePath+"/excelModel/ZZSScottareModelLsit.xls";
+    	
+    	//data
+    	//封装整个excel所需数据,key为sheet名字,String
+    	Map<String,List<String>> fieldData = new HashMap<String, List<String>>();
+    	//封装一个sheet的数据
+    	List<String> cellData = new ArrayList<String>();
+    	cellData.add("附件1 值 税 纳 增  税  申 报 表3");
+    	cellData.add("税款所属时间：自2016 ");
+    	cellData.add("填表日期： 2016 年 12  月  30  日");
+    	cellData.add("金额单位：10000.00元 至角分");
+    	cellData.add("税款所属时间：自2015 ");
+    	cellData.add("填表日期： 2015 年 12  月  30  日");
+    	cellData.add("金额单位：10000.01元 至角分");
+    	fieldData.put("首页", cellData);
+    	
+    	//sheet2
+    	cellData = new ArrayList<String>();
+    	cellData.add("sheet2附件1 值 税 纳 增  税  申 报 表3");
+    	cellData.add("sheet2税款所属时间：自2016 ");
+    	cellData.add("sheet2填表日期： 2016 年 12  月  30  日");
+    	cellData.add("sheet2金额单位：10000.00元 至角分");
+    	cellData.add("sheet2税款所属时间：自2015 ");
+    	cellData.add("sheet2填表日期： 2015 年 12  月  30  日");
+    	cellData.add("sheet2金额单位：10000.01元 至角分");
+    	fieldData.put("Sheet2", cellData);
+    	//data
+    	
+    	try {
+    		File f = new File(filePath);
+    		if(!f.exists()){
+    			logger.error("文件路径不存在");
+    			return null;
+    		}
+    	} catch (Exception e1) {
+    		logger.error("文件路径不存在");
+    		return null;
+    	}
+    	ExcelByModelUtil excel = new ExcelByModelUtil();
+    	excel.setModelPath(filePath).setRowCellCount(54, 40).writeDataByList(fieldData);
+    	
+    	HttpHeaders header = new HttpHeaders();
+    	try {
+    		header.setContentDispositionFormData("attachment", new String("增值税list.xls".getBytes("UTF-8"),"ISO8859-1"));
+    	} catch (UnsupportedEncodingException e) {
+    		logger.error(e.getMessage());
+    	}
+    	header.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+    	return new ResponseEntity<byte[]>(excel.toByteArray(),header,HttpStatus.CREATED);
     }
 }

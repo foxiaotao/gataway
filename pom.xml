@@ -44,8 +44,6 @@
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-test</artifactId>
 			<version>${org.springframework.version}</version>
-			<type>jar</type>
-			<scope>test</scope>
 		</dependency>
 
 		<dependency>
