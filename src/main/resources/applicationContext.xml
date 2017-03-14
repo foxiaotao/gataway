@@ -47,31 +47,15 @@
 		<property name="dataSource" ref="dataSource"/>
 	</bean>
 	
-<!-- 	<bean id="sqlDao" class="simon.demo.core.dao.util.SqlDao"> -->
-<!-- 		<property name="jdbcTemplate" ref="jdbcTemplate"/> -->
-<!-- 	</bean> -->
-	
-<!-- 	 事务 --> 
-<!-- 	<bean id="txManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager"> -->
-<!-- 		<property name="dataSource" ref="dataSource"/> -->
-<!-- 	</bean> -->
-
-<!-- 	<tx:advice id="txAdvice" transaction-manager="txManager"> -->
-<!-- 		<tx:attributes> -->
-<!-- 			<tx:method name="insert*" propagation="REQUIRED"/> -->
-<!-- 			<tx:method name="update*" propagation="REQUIRED"/> -->
-<!-- 			<tx:method name="delete*" propagation="REQUIRED"/> -->
-			
-<!-- 			<tx:method name="find" read-only="true"/> -->
-<!-- 			<tx:method name="get" read-only="true"/> -->
-<!-- 			<tx:method name="*" propagation="REQUIRED"/> -->
-<!-- 		</tx:attributes> -->
-<!-- 	</tx:advice> -->
-	
-<!-- 	<aop:config> -->
-<!-- 		<aop:pointcut expression="execution(* simon.demo.core.service.*.*(..))" id="pointCut"/> -->
-<!-- 		<aop:advisor advice-ref="txAdvice" pointcut-ref="pointCut"/> -->
-<!-- 	</aop:config> -->
+	    	<!-- redisCacheManager -->
+	<bean id="redisCacheManager" class="simon.demo.core.cache.RedisCacheManager"
+		init-method="init" destroy-method="shutDown" scope="singleton">
+		<property name="maxActive" value="1000" />
+		<property name="maxIdle" value="100" />
+		<property name="maxWait" value="100" />
+		<property name="port" value="6379" />
+		<property name="ip" value="192.168.1.102" />
+	</bean>
 	
 	<!-- ================ Shiro start ================ -->
 	<bean id="securityManager" class="org.apache.shiro.web.mgt.DefaultWebSecurityManager">

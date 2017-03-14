@@ -24,7 +24,7 @@
 <!--     </pluginRepositories> -->
     
  	<properties>
-		<org.springframework.version>4.1.5.RELEASE</org.springframework.version>
+		<org.springframework.version>4.0.0.RELEASE</org.springframework.version>
 	</properties>
 
 	<dependencies>
@@ -201,6 +201,11 @@
 			<artifactId>commons-io</artifactId>
             <version>2.4</version>
 		</dependency>
+<!-- 		<dependency> -->
+<!--                 <groupId>commons-configuration</groupId> -->
+<!--                 <artifactId>commons-configuration</artifactId> -->
+<!--                 <version> 1.9</version> -->
+<!--          </dependency> -->
 		<dependency>
 			<groupId>commons-codec</groupId>
 			<artifactId>commons-codec</artifactId>
@@ -218,17 +223,21 @@
             <version>2.3</version>
 		</dependency>
 		<!-- GENERAL UTILS end -->
-<!-- 		<dependency> -->
-<!--             <groupId>com.alibaba</groupId> -->
-<!--             <artifactId>fastjson</artifactId> -->
-<!--             <version>1.1.42</version> -->
-<!--         </dependency> -->
+		<dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>fastjson</artifactId>
+            <version>1.1.42</version>
+        </dependency>
 		<dependency>
 		    <groupId>com.fasterxml.jackson.core</groupId>
 		    <artifactId>jackson-databind</artifactId>
 		    <version>2.4.0</version>
 		</dependency>
-		
+		<dependency>
+			<groupId>redis.clients</groupId>
+			<artifactId>jedis</artifactId>
+			<version>2.5.0</version>
+		</dependency>
 		<!-- junit test -->
 <!-- 		<dependency> -->
 <!-- 			<groupId>org.mockito</groupId> -->
