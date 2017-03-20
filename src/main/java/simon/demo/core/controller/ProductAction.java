@@ -1,16 +1,22 @@
 package simon.demo.core.controller;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+
 import simon.demo.core.bean.Product;
 import simon.demo.core.service.ProductService;
+import simon.demo.core.util.jsonresult.JsonResult;
+import simon.demo.core.util.jsonresult.JsonResultFactory;
 
 @Controller
 @RequestMapping(value="/Product")
@@ -20,6 +26,10 @@ public class ProductAction {
     public String index(String id) throws Exception {
     	return "product";
     }
+	@RequestMapping(value="/base_index.do")
+	public String baseIndex(String id) throws Exception {
+		return "base/product";
+	}
 	@RequestMapping(value="/index2.do")
 	public String index2(String id) throws Exception {
 		return "model";
@@ -53,10 +63,9 @@ public class ProductAction {
     }
 
     @RequestMapping(value="/findByPage.do")
-    @ResponseBody
-    public Map<String,Object> findByPage(Product record, int rows, int page) throws Exception {
-        int startPage=rows*(page-1);
-        return productServiceImpl.findByPage(record,startPage,rows);
+    public ResponseEntity<JsonResult> findByPage(Product record) throws Exception {
+    	Map<String, Object> result = productServiceImpl.findByPage(record);
+        return new ResponseEntity<JsonResult>(JsonResultFactory.extgrid((List<Product>) result.get("rows"),Integer.valueOf(result.get("total").toString())), HttpStatus.OK);
     }
 
     @RequestMapping(value="/update.do" ,method = RequestMethod.POST)

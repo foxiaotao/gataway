@@ -77,19 +77,19 @@ public class ProductActionTest {
     	return map;
     }
 
-    @RequestMapping(value="/findByPage.do")
-    @ResponseBody
-    public Map<String,Object> findByPage(Product record, int rows, int page) throws Exception {
-        int startPage=rows*(page-1);
-        return productServiceImpl.findByPage(record,startPage,rows);
-    }
-    @RequestMapping(value="/findDetail.do")
-    @ResponseBody
-    public Map<String,Object> findDetail(Product record, int rows, int page) throws Exception {
-    	int startPage=rows*(page-1);
-    	Map<String, Object> findByPage = productServiceImpl.findByPage(record,startPage,rows);
-    	return findByPage;
-    }
+//    @RequestMapping(value="/findByPage.do")
+//    @ResponseBody
+//    public Map<String,Object> findByPage(Product record, int rows, int page) throws Exception {
+//        int startPage=rows*(page-1);
+////        return productServiceImpl.findByPage(record,startPage,rows);
+//    }
+//    @RequestMapping(value="/findDetail.do")
+//    @ResponseBody
+//    public Map<String,Object> findDetail(Product record, int rows, int page) throws Exception {
+//    	int startPage=rows*(page-1);
+//    	Map<String, Object> findByPage = productServiceImpl.findByPage(record,startPage,rows);
+//    	return findByPage;
+//    }
 
     @RequestMapping(value="/update.do" ,method = RequestMethod.POST)
     @ResponseBody

@@ -1,12 +1,19 @@
-<link rel="stylesheet" href="${pageContext.request.contextPath }/plugins/jquery-easyui/themes/icon.css" type="text/css"/>
-<link rel="stylesheet" href="${pageContext.request.contextPath }/plugins/jquery-easyui/themes/default/easyui.css" type="text/css"/>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<c:set var="ctx" value="${pageContext.request.contextPath}"/>
+<%-- <link rel="shortcut icon" href="${pageContext.request.contextPath }/Resource/Images/favicon.ico" /> --%>
+<%-- <link rel="bookmark" href="${pageContext.request.contextPath }/Resource/Images/favicon.ico" type="image/x-icon" /> --%>
+<%-- <script type="text/javascript" src="${pageContext.request.contextPath }/Scripts/PrintInvoiceProof.js"></script> --%>
+<%-- <script type="text/javascript" src="${pageContext.request.contextPath }/Scripts/JsPrint.js"></script> --%>
 
-<script type="text/javascript" src="${pageContext.request.contextPath }/plugins/jquery-easyui/jquery.min.js"></script>
-<script type="text/javascript" src="${pageContext.request.contextPath }/plugins/jquery-easyui/jquery.easyui.min.js"></script>
-<script type="text/javascript" src="${pageContext.request.contextPath }/plugins/jquery-easyui/locale/easyui-lang-zh_CN.js"></script>
-<script type="text/javascript">
-	var rootName='${ctx}';
-</script>
-<script type="text/javascript" src="${pageContext.request.contextPath }/js/Template.js"></script>
-<script type="text/javascript" src="${pageContext.request.contextPath }/js/Objects.js"></script>
-<script type="text/javascript" src="${pageContext.request.contextPath }/js/BaseDemo.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath }/plugins/Extjs/ext-all.js"></script>
+<%-- <script type="text/javascript" src="${pageContext.request.contextPath }/Scripts/ExtPrivate.js"></script> --%>
+<script type="text/javascript" src="${pageContext.request.contextPath }/plugins/Extjs/packages/ext-locale/build/ext-locale-zh_CN.js"></script>
+
+<%-- <script type="text/javascript" src="${pageContext.request.contextPath }/Scripts/Template.js"></script> --%>
+<%-- <script type="text/javascript" src="${pageContext.request.contextPath }/Scripts/Objects.js"></script> --%>
+<%-- <script type="text/javascript" src="${pageContext.request.contextPath }/Scripts/BaseDemo.js"></script> --%>
+<%-- <script type="text/javascript" src="${pageContext.request.contextPath }/Scripts/DefineVtypeValidator.js"></script> --%>
+
+
+<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath }/plugins/Extjs/packages/ext-theme-crisp/build/resources/ext-theme-crisp-all.css" />
+    

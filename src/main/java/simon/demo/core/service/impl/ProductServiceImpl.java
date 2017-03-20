@@ -7,6 +7,8 @@ import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
+
 import simon.demo.core.bean.Product;
 import simon.demo.core.bean.ProductExample.Criteria;
 import simon.demo.core.bean.ProductExample;
@@ -26,10 +28,11 @@ public class ProductServiceImpl implements ProductService {
         return productMapper.insertSelective(record);
     }
 
-    public Map<String,Object> findByPage(Product record, int startPage, int rows) throws Exception {
+    public Map<String,Object> findByPage(Product record) throws Exception {
+    	Assert.notNull(record,"产品查询，参数不能为空！");
         Map<String,Object> map=new LinkedHashMap<String,Object>();
         ProductExample example=new ProductExample();
-        example.setOrderByClause("id desc");
+//        example.setOrderByClause("id desc");
         Criteria criteria = example.createCriteria();
         
         if(StringUtils.isNotEmpty(record.getId())){
@@ -51,7 +54,7 @@ public class ProductServiceImpl implements ProductService {
         
         //具体条件查询请自行处理！！！
         map.put("total", productMapper.countAll());
-        map.put("rows", productMapper.selectByExampleWithPage(example,startPage,rows));
+        map.put("rows", productMapper.selectByExampleWithPage(example,record.getStart(),record.getLimit()));
         return map;
     }
 

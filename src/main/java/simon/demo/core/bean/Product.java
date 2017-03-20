@@ -1,6 +1,6 @@
 package simon.demo.core.bean;
 
-public class Product {
+public class Product extends BaseEntity{
     private String id;
 
     private String product;
