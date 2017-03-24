@@ -2,11 +2,13 @@ package simon.demo.core.controller;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.IOException;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -22,6 +24,7 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.web.servlet.ShiroHttpServletRequest;
 import org.apache.shiro.web.subject.WebSubject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -29,16 +32,24 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.Assert;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
+import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 
 import simon.demo.core.bean.Product;
+import simon.demo.core.bean.ReturnBean;
+import simon.demo.core.service.POIService;
 import simon.demo.core.service.ProductService;
 import simon.demo.core.util.ExcelByModelUtil;
 import simon.demo.core.util.excel.ADDRFHistoryExcelExportor;
 import simon.demo.core.util.excel.AbstractExcelExportor;
 
 import com.alibaba.fastjson.JSONArray;
+
 
 @Controller
 @RequestMapping(value="/poi")
@@ -53,6 +64,15 @@ public class POIAction {
 	@Autowired
     ProductService productServiceImpl;
 
+	@Autowired
+    POIService poiServiceImpl;
+	
+	@RequestMapping(value="/inp.do")
+    public String inportIndex() throws Exception {
+        return "poi/inportXls";
+    }
+	
+	
 	@RequestMapping(value="/exportMap.do")
 	@ResponseBody
     public Map<String,Object> exportMap() throws Exception {
@@ -346,5 +366,87 @@ public class POIAction {
     	}
     	header.setContentType(MediaType.APPLICATION_OCTET_STREAM);
     	return new ResponseEntity<byte[]>(excel.toByteArray(),header,HttpStatus.CREATED);
+    }
+    
+    /**非 shiro环境
+     * @param resquest
+     * @param response
+     * @return
+     */
+    @RequestMapping(value="inportXls.do")
+    public ResponseEntity inportXls1(HttpServletRequest resquest,HttpServletResponse response){
+    	try {  
+			MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) resquest;  
+		    Map<String, MultipartFile> fileMap = multipartRequest.getFileMap();
+		    String xlsName;
+		    String[] name;
+		    for (Map.Entry<String, MultipartFile> entity : fileMap.entrySet()) {   
+		    	// 上传文件 
+		    	MultipartFile mf = entity.getValue();  
+		    	if(mf.getSize() > 4097152){
+		    		//(MaxUploadSizeExceededException e) {
+		    		return new ResponseEntity(new ReturnBean(false,"上传失败,文件大小超过2M限制"), HttpStatus.OK);
+		    	}
+		    	xlsName = mf.getOriginalFilename();
+		    	//文件不能为空
+		    	Assert.notNull(xlsName);
+		    	
+	    		name = xlsName.split("\\.");
+    			//验证文件格式
+    			if("xls".equals(name[1])){
+    				//处理文件
+    				poiServiceImpl.actionExcel(mf.getInputStream());
+    				return new ResponseEntity(new ReturnBean(true,"上传成功"), HttpStatus.OK);
+    			}else{
+    				return new ResponseEntity("上传失败,文件大小超过2M限制", HttpStatus.OK);
+    			}
+		  	}  
+		} catch (IOException e) {
+			e.printStackTrace();
+			return new ResponseEntity(new ReturnBean(false,"上传成功"), HttpStatus.OK);
+		} 
+    	
+		return null;
+    }
+    /**shiro环境
+     * @param resquest
+     * @param response
+     * @return
+     */
+    @RequestMapping(value="inportXlsShiro.do")
+    public ResponseEntity inportXlsShiro(ShiroHttpServletRequest shiroRequest,HttpServletResponse response){
+    	try {  
+    	    CommonsMultipartResolver commonsMultipartResolver = new CommonsMultipartResolver();  
+    	    MultipartHttpServletRequest multipartRequest = commonsMultipartResolver.resolveMultipart((HttpServletRequest) shiroRequest.getRequest());  
+    		Map<String, MultipartFile> fileMap = multipartRequest.getFileMap();
+    		String xlsName;
+    		String[] name;
+    		for (Map.Entry<String, MultipartFile> entity : fileMap.entrySet()) {   
+    			// 上传文件 
+    			MultipartFile mf = entity.getValue();  
+    			if(mf.getSize() > 4097152){
+    				//(MaxUploadSizeExceededException e) {
+    				return new ResponseEntity(new ReturnBean(false,"上传失败,文件大小超过2M限制"), HttpStatus.OK);
+    			}
+    			xlsName = mf.getOriginalFilename();
+    			//文件不能为空
+    			Assert.notNull(xlsName);
+    			
+    			name = xlsName.split("\\.");
+    			//验证文件格式
+    			if("xls".equals(name[1])){
+    				//处理文件
+    				poiServiceImpl.actionExcel(mf.getInputStream());
+    				return new ResponseEntity(new ReturnBean(true,"上传成功"), HttpStatus.OK);
+    			}else{
+    				return new ResponseEntity("上传失败,文件大小超过2M限制", HttpStatus.OK);
+    			}
+    		}  
+    	} catch (IOException e) {
+    		e.printStackTrace();
+    		return new ResponseEntity(new ReturnBean(false,"上传成功"), HttpStatus.OK);
+    	} 
+    	
+    	return null;
     }
 }
