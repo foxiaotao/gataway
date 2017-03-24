@@ -97,6 +97,9 @@
            		/index.jsp			= anon
            		/login_login.do	    = anon
            		/login_loginout.do	= anon
+           		/poi/inp.do	= anon
+           		/poi/inportXls.do	= anon
+           		/poi/inportXlsShiro.do	= anon
            		/**					= authc
 			</value>
 		</property>
