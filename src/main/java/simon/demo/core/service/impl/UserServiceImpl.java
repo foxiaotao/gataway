@@ -5,6 +5,9 @@ import java.util.List;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.Assert;
+
 import simon.demo.core.bean.User;
 import simon.demo.core.bean.UserExample.Criteria;
 import simon.demo.core.bean.UserExample;
@@ -37,8 +40,15 @@ public class UserServiceImpl implements UserService {
     }
 
     public List<User> selectByExample(UserExample example) throws Exception {
+    	List<User> list1 = userMapper.selectByExample(example);
+    	System.out.println(list1.size());
+    	List<User> list2 = userMapper.selectByExample(example);
+    	System.out.println(list2.size());
         return userMapper.selectByExample(example);
     }
+//    public List<User> selectByExample(UserExample example) throws Exception {
+//    	return userMapper.selectByExample(example);
+//    }
 
     public Map<String,Object> findByPage(User record, int startPage, int rows) throws Exception {
         Map<String,Object> map=new LinkedHashMap<String,Object>();
@@ -50,8 +60,10 @@ public class UserServiceImpl implements UserService {
         return map;
     }
 
+    @Transactional
     public User selectByPrimaryKey(Long id){
-        return userMapper.selectByPrimaryKey(id);
+    	User user2 = userMapper.selectByPrimaryKey(id);
+        return user2;
     }
 
     public int updateByExampleSelective(User record, UserExample example) throws Exception {
@@ -62,8 +74,12 @@ public class UserServiceImpl implements UserService {
         return userMapper.updateByExample(record,example);
     }
 
+    @Transactional
     public int updateByPrimaryKeySelective(User record) throws Exception {
-        return userMapper.updateByPrimaryKeySelective(record);
+    	int type = userMapper.updateByPrimaryKeySelective(record);
+//    	Assert.isNull(record, "不能为空");
+    	System.out.println(11);
+        return type;
     }
 
     public int updateByPrimaryKey(User record) throws Exception {
@@ -73,6 +89,8 @@ public class UserServiceImpl implements UserService {
 
 	public String test() {
 		// TODO Auto-generated method stub
+		List<User> user = userMapper.selectUserById(2l);
+		System.out.println(user.get(0));
 		return null;
 	}
 
@@ -82,7 +100,6 @@ public class UserServiceImpl implements UserService {
 	}
 
 	public int batchInsert(List records) throws Exception {
-		// TODO Auto-generated method stub
-		return 0;
+		return userMapper.batchInsert2(records);
 	}
 }

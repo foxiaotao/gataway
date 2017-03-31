@@ -17,6 +17,7 @@ public interface UserMapper {
     int insert(User record);
 
     int batchInsert(List<User> records);
+    int batchInsert2(List<User> records);
 
     int insertSelective(User record);
 
@@ -35,4 +36,8 @@ public interface UserMapper {
     int updateByPrimaryKeySelective(User record);
 
     int updateByPrimaryKey(User record);
+    
+    List<User> selectUserById(Long userid);
+    
+    List<User> selectUser2(String username,String password);
 }

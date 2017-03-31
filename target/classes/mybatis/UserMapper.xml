@@ -144,11 +144,11 @@
     </if>
     limit ${startPage},${rows}
   </select>
-  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
     select 
     <include refid="Base_Column_List" />
     from s_user
-    where id = #{id,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=BIGINT}
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
     delete from s_user
@@ -184,6 +184,19 @@
       #{item.gender,jdbcType=VARCHAR}, #{item.cellphone,jdbcType=DECIMAL}, #{item.username,jdbcType=VARCHAR}, 
       #{item.password,jdbcType=VARCHAR},#{item.isdelete,jdbcType=VARCHAR}
        from dual)
+    </foreach>
+  </insert>
+  <insert id="batchInsert2" parameterType="java.util.List" >
+    insert into s_user (id, name, addr, 
+      `desc`, birth, qq, 
+      gender, cellphone, username, 
+      password, isDelete
+      ) values
+    <foreach collection="list"  item="item"  index="index" separator=",">
+    (#{item.id,jdbcType=VARCHAR}, #{item.name,jdbcType=VARCHAR}, #{item.addr,jdbcType=VARCHAR}, 
+      #{item.desc,jdbcType=VARCHAR}, #{item.birth,jdbcType=TIMESTAMP}, #{item.qq,jdbcType=VARCHAR}, 
+      #{item.gender,jdbcType=VARCHAR}, #{item.cellphone,jdbcType=DECIMAL}, #{item.username,jdbcType=VARCHAR}, 
+      #{item.password,jdbcType=VARCHAR},#{item.isdelete,jdbcType=VARCHAR})
     </foreach>
   </insert>
   <insert id="insertSelective" parameterType="simon.demo.core.bean.User" >
@@ -382,4 +395,9 @@
       isDelete = #{isdelete,jdbcType=VARCHAR}
     where id = #{id,jdbcType=VARCHAR}
   </update>
+  
+  <select id="selectUserById" returnMap="BaseResultMap" parameterType="java.lang.Long">
+  		select * from s_user where id = #{userid}
+  </select>
+  
 </mapper>

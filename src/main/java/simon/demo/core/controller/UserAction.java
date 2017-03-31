@@ -1,5 +1,7 @@
 package simon.demo.core.controller;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
@@ -9,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import simon.demo.core.bean.User;
+import simon.demo.core.bean.UserExample;
 import simon.demo.core.service.UserService;
 
 @Controller
@@ -33,6 +36,28 @@ public class UserAction {
     @RequestMapping(value="/insert.do")
     public void insert(User record) throws Exception {
         userServiceImpl.insert(record);
+    }
+    @RequestMapping(value="/batchInsert.do")
+    public void batchInsert(User record) throws Exception {
+    	
+    	List list = new ArrayList();
+    	long id = 5l;
+    	
+    	for (int i = 0; i < 5; i++) {
+    		record = new User();
+        	record.setId(id++);
+        	record.setName("xiaotao"+id);
+        	record.setUsername("admin"+id);
+        	record.setPassword("123");
+        	list.add(record);
+		}
+    	userServiceImpl.batchInsert(list);
+    }
+    @RequestMapping(value="/select.do")
+    public void search(User record) throws Exception {
+    	UserExample ex = new UserExample();
+    	ex.createCriteria().andNameEqualTo(record.getName());
+    	List<User> selectByExample = userServiceImpl.selectByExample(ex);
     }
 
     @RequestMapping(value="/findByPage.do")

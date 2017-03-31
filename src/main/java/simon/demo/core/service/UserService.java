@@ -28,4 +28,6 @@ public interface UserService {
     int updateByExampleSelective(User record, UserExample example) throws Exception;
 
     int updateByPrimaryKeySelective(User record) throws Exception;
+    
+    public String test();
 }
