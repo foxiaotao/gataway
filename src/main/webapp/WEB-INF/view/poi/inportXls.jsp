@@ -19,7 +19,12 @@
 		<input type="submit" value="上传"/>
 	</form>
 	<h1>=============</h1>
-	<form action="${ctx}/poi/inportXlsShiro.do" method="post" enctype="multipart/form-data">
+	<form action="${ctx}/poi/fastexcel.do" method="post" enctype="multipart/form-data">
+		<span>选择excel文件：</span><input type="file" name="uploadfile" />
+		<input type="submit" value="上传-下载"/>
+	</form>
+	<h1>=============</h1>
+	<form action="${ctx}/poi/inportXlsShiroFastexcel.do" method="post" enctype="multipart/form-data">
 		<span>选择excel文件：</span><input type="file" name="uploadfile" />
 		<input type="submit" value="上传"/>
 	</form>

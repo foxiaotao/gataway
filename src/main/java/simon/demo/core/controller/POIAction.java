@@ -19,6 +19,7 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -47,6 +48,8 @@ import simon.demo.core.service.ProductService;
 import simon.demo.core.util.ExcelByModelUtil;
 import simon.demo.core.util.excel.ADDRFHistoryExcelExportor;
 import simon.demo.core.util.excel.AbstractExcelExportor;
+import simon.demo.core.util.fastexcel.RandFExcel;
+import simon.demo.core.util.fastexcel.RandFFutrueBean;
 
 import com.alibaba.fastjson.JSONArray;
 
@@ -89,7 +92,7 @@ public class POIAction {
     public ResponseEntity exportRe() throws Exception {
     	logger.error("【导出log】");
         List<Product> selectAll = productServiceImpl.selectAll();
-        return new ResponseEntity<>(JSONArray.toJSON(selectAll), HttpStatus.OK);
+        return new ResponseEntity(JSONArray.toJSON(selectAll), HttpStatus.OK);
     }
 
 
@@ -408,16 +411,15 @@ public class POIAction {
     	
 		return null;
     }
-    /**shiro环境
+    /**非 shiro环境
      * @param resquest
      * @param response
      * @return
      */
-    @RequestMapping(value="inportXlsShiro.do")
-    public ResponseEntity inportXlsShiro(ShiroHttpServletRequest shiroRequest,HttpServletResponse response){
+    @RequestMapping(value="inportXlsShiroFastexcel.do")
+    public ResponseEntity inportXlsShiroFastexcel(HttpServletRequest resquest,HttpServletResponse response){
     	try {  
-    	    CommonsMultipartResolver commonsMultipartResolver = new CommonsMultipartResolver();  
-    	    MultipartHttpServletRequest multipartRequest = commonsMultipartResolver.resolveMultipart((HttpServletRequest) shiroRequest.getRequest());  
+    		MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) resquest;  
     		Map<String, MultipartFile> fileMap = multipartRequest.getFileMap();
     		String xlsName;
     		String[] name;
@@ -434,12 +436,23 @@ public class POIAction {
     			
     			name = xlsName.split("\\.");
     			//验证文件格式
-    			if("xls".equals(name[1])){
+    			if("xls".equals(name[1]) || "xlsx".equals(name[1])){
     				//处理文件
-    				poiServiceImpl.actionExcel(mf.getInputStream());
+    				RandFExcel excel = new RandFExcel();
+    				try {
+						excel.setExcelInputStream(mf.getInputStream()).setInportStartRow(1);
+					} catch (InvalidFormatException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+    				long startTime = System.currentTimeMillis();
+    				List<RandFFutrueBean> list = excel.excel2ObjByAnnotation(RandFFutrueBean.class);
+    				System.out.println("list.size="+list.size());
+    				logger.error("【fastexcel耗时】"+ (System.currentTimeMillis()-startTime) + "ms");
+    				
     				return new ResponseEntity(new ReturnBean(true,"上传成功"), HttpStatus.OK);
     			}else{
-    				return new ResponseEntity("上传失败,文件大小超过2M限制", HttpStatus.OK);
+    				return new ResponseEntity("请选择有效excel文件", HttpStatus.OK);
     			}
     		}  
     	} catch (IOException e) {
@@ -448,5 +461,70 @@ public class POIAction {
     	} 
     	
     	return null;
+    }
+    /**非 shiro环境  导入，导出
+     * @param resquest
+     * @param response
+     * @return
+     */
+    @RequestMapping(value="fastexcel.do")
+    public ResponseEntity<byte[]> fastexcel(HttpServletRequest resquest,HttpServletResponse response){
+    	try {  
+    		MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) resquest;  
+    		Map<String, MultipartFile> fileMap = multipartRequest.getFileMap();
+    		String xlsName;
+    		String[] name;
+    		for (Map.Entry<String, MultipartFile> entity : fileMap.entrySet()) {   
+    			// 上传文件 
+    			MultipartFile mf = entity.getValue();  
+    			if(mf.getSize() > 4097152){
+    				//(MaxUploadSizeExceededException e) {
+//    				return new ResponseEntity(new ReturnBean(false,"上传失败,文件大小超过2M限制"), HttpStatus.OK);
+    			}
+    			xlsName = mf.getOriginalFilename();
+    			//文件不能为空
+    			Assert.notNull(xlsName);
+    			
+    			name = xlsName.split("\\.");
+    			//验证文件格式
+    			if("xls".equals(name[1]) || "xlsx".equals(name[1])){
+    				//处理文件
+    				RandFExcel excel = new RandFExcel();
+    				try {
+    					excel.setExcelInputStream(mf.getInputStream()).setInportStartRow(1);
+    				} catch (InvalidFormatException e) {
+    					// TODO Auto-generated catch block
+    					e.printStackTrace();
+    				}
+    				long startTime = System.currentTimeMillis();
+    				List<RandFFutrueBean> list = excel.excel2ObjByAnnotation(RandFFutrueBean.class);
+    				System.out.println("list.size="+list.size());
+    				logger.error("【fastexcel耗时】"+ (System.currentTimeMillis()-startTime) + "ms");
+    				
+    				
+    				RandFExcel export = new RandFExcel();
+    				export.createExcel(list);
+    	    		
+    	    		String fileName="产品管理2.xls";  
+    	    		HttpHeaders header = new HttpHeaders();
+    	    		try {
+    	    			header.setContentDispositionFormData("attachment", new String(fileName.getBytes("UTF-8"),"ISO8859-1"));
+    	    		} catch (Exception e) {
+    	    			logger.error(e.getMessage());
+    	    		}
+    	    		//二进制数据
+    	    		header.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+    	    		return new ResponseEntity<byte[]>(export.toByteArray(),header,HttpStatus.CREATED);
+//    				return new ResponseEntity(new ReturnBean(true,"上传成功"), HttpStatus.OK);
+    			}else{
+//    				return new ResponseEntity("请选择有效excel文件", HttpStatus.OK);
+    			}
+    		}  
+    	} catch (IOException e) {
+    		e.printStackTrace();
+//    		return new ResponseEntity(new ReturnBean(false,"上传成功"), HttpStatus.OK);
+    	} 
+    	return null;
+    	
     }
 }
