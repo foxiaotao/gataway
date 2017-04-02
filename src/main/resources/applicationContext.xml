@@ -99,7 +99,7 @@
            		/login_loginout.do	= anon
            		/poi/inp.do	= anon
            		/poi/inportXls.do	= anon
-           		/poi/inportXlsShiro.do	= anon
+           		/poi/*	= anon
            		/**					= authc
 			</value>
 		</property>

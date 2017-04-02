@@ -10,10 +10,27 @@ import org.junit.Test;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
-public class RequestTest extends JunitSpringTest{
+public class RequestTest {//extends JunitSpringTest{
 
 	
 	@Test
 	public void indextest(){
 	}
+	
+    public static void main(String[] args) {
+        System.out.println(getString());
+ 
+    }
+    @SuppressWarnings("finally")
+	static String getString(){
+        try{
+            return "SUCCESS";
+        }catch(Exception e){
+             
+        }finally{
+            System.out.println("Finally is executing");
+//            return "finally";//如果这句放在finally之外呢？
+        }
+        return "last";
+    }
 }
