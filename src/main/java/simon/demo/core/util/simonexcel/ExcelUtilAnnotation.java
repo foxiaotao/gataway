@@ -39,7 +39,7 @@ import simon.demo.core.util.fastexcel.MapperCell;
  * @author snutao
  *
  */
-public abstract class AnnotationExcelUtil extends ExcelAbstract{
+public abstract class ExcelUtilAnnotation extends ExcelAbstract{
 
 	//++++++++++++++++++++++++++++++++++++++++++====导入====+++++++++++++++++++++++++++++++++++++++++++
 	//++++++++++++++++++++++++++++++++++++++++++====导入====+++++++++++++++++++++++++++++++++++++++++++
@@ -50,7 +50,7 @@ public abstract class AnnotationExcelUtil extends ExcelAbstract{
 	     * @param format 格式
 	     */
 		@Override
-	    public AnnotationExcelUtil setDateFormat(String format) {
+	    public ExcelUtilAnnotation setDateFormat(String format) {
 	        this.dateFormat = new SimpleDateFormat(format);
 	        return this;
 	    }
@@ -60,7 +60,7 @@ public abstract class AnnotationExcelUtil extends ExcelAbstract{
 	     * @param sheetName 需要读取的Sheet名字
 	     */
 		@Override
-	    public AnnotationExcelUtil setSheetName(String sheetName) {
+	    public ExcelUtilAnnotation setSheetName(String sheetName) {
 	        this.sheetName = sheetName;
 	        return this;
 	    }
@@ -70,7 +70,7 @@ public abstract class AnnotationExcelUtil extends ExcelAbstract{
 	     * @param startRow 开始行数
 	     */
 		@Override
-	    public AnnotationExcelUtil setImportStartRow(int startRow) {
+	    public ExcelUtilAnnotation setImportStartRow(int startRow) {
 	        if (startRow < 1) {
 	            throw new RuntimeException("最小为1");
 	        }
@@ -83,7 +83,7 @@ public abstract class AnnotationExcelUtil extends ExcelAbstract{
 	     * @throws IOException
 	     */
 		@Override
-	    public AnnotationExcelUtil setExcelFilePathIn(String excelFilePathIn){
+	    public ExcelUtilAnnotation setExcelFilePathIn(String excelFilePathIn){
 	        this.excelFilePathIn = excelFilePathIn;
 	        this.workbook = createWorkbookByFilePath();
 	    	return this;
@@ -120,7 +120,7 @@ public abstract class AnnotationExcelUtil extends ExcelAbstract{
 	     * @throws InvalidFormatException 非法的格式异常
 	     */
 	    @Override
-	    public AnnotationExcelUtil setExcelInputStream(InputStream inputStream) {
+	    public ExcelUtilAnnotation setExcelInputStream(InputStream inputStream) {
 	        try {
 				this.workbook = WorkbookFactory.create(inputStream);
 			} catch (EncryptedDocumentException | InvalidFormatException | IOException e) {
@@ -137,7 +137,7 @@ public abstract class AnnotationExcelUtil extends ExcelAbstract{
 	     * @return 读取结果
 	     */
 	    
-	    public <T> List<T> excel2ObjByAnnotation(Class<T> clazz) {
+	    public <T> List<T> getEntities(Class<T> clazz) {
 	        List<T> resultList = null;
 	        try {
 	        	int num = workbook.getNumberOfSheets();	
@@ -271,7 +271,7 @@ public abstract class AnnotationExcelUtil extends ExcelAbstract{
 	     * @return
 	     */
 	    @Override
-	    public AnnotationExcelUtil setOutFilePath(String outFilePath){
+	    public ExcelUtilAnnotation setOutFilePath(String outFilePath){
 	    	this.outFilePath = outFilePath;
 	    	return this;
 	    }

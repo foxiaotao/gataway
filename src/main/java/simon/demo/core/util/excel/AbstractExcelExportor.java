@@ -9,6 +9,7 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.util.Assert;
 import org.springframework.util.ReflectionUtils;
 
@@ -29,7 +30,7 @@ public abstract class AbstractExcelExportor {
     // properties
     private String[] columnNames;
 
-    protected Workbook workbook = new SXSSFWorkbook(5000);
+    protected Workbook workbook = new XSSFWorkbook();
     
     protected Sheet sheet;
     protected CellStyle[] cellStyles;

@@ -37,5 +37,15 @@
 	<form action="${ctx}/poi/exportModelMapUtil.do" method="post">
 		<input type="submit" value="下载"/>
 	</form>
+	<h1>=======inportMapper======</h1>
+	<form action="${ctx}/poi/inportMapper.do" method="post"  enctype="multipart/form-data">
+	<span>选择excel文件：</span><input type="file" name="uploadfile" />
+		<input type="submit" value="上传"/>
+	</form>
+	<h1>=======mapperExcel_in_out======</h1>
+	<form action="${ctx}/poi/mapperExcel.do" method="post"  enctype="multipart/form-data">
+	<span>选择excel文件：</span><input type="file" name="uploadfile" />
+		<input type="submit" value="上传-下载"/>
+	</form>
 </body>
 </html>

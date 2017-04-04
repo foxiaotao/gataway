@@ -9,6 +9,7 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -43,6 +44,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 
+import simon.demo.core.bean.ExchangeRate;
 import simon.demo.core.bean.Product;
 import simon.demo.core.bean.ReturnBean;
 import simon.demo.core.service.POIService;
@@ -53,7 +55,9 @@ import simon.demo.core.util.excel.ADDRFHistoryExcelExportor;
 import simon.demo.core.util.excel.AbstractExcelExportor;
 import simon.demo.core.util.fastexcel.RandFExcel;
 import simon.demo.core.util.fastexcel.RandFFutrueBean;
+import simon.demo.core.util.simonexcel.ExcelUtilMapping;
 import simon.demo.core.util.simonexcel.XxxExcelUtil;
+import simon.demo.core.util.simonexcel.XxxExcelUtilMapping;
 
 import com.alibaba.fastjson.JSONArray;
 
@@ -291,6 +295,152 @@ public class POIAction {
     	
 		return null;
     }
+    /**非 shiro环境
+     * @param resquest
+     * @param response
+     * @return
+     */
+    @RequestMapping(value="inportMapper.do")
+    public ResponseEntity inportMapper(HttpServletRequest resquest,HttpServletResponse response){
+    	//初始化表头映射，因为映射的标题是符合标题行目前不支持，所以直接使用顺序映射
+    			LinkedHashMap<String, String> pm = new LinkedHashMap<String, String>();
+    			pm.put("ad_contract_id", "订单ID");
+    			pm.put("contract_name", "订单名称");
+    			pm.put("ad_cast_id", "投放ID"); 
+    			pm.put("cast_name", "订单名称"); 
+    			pm.put("ad_creative_id", "素材ID"); 
+    			pm.put("creative_name", "素材名称"); 
+    			pm.put("province_name", "省份"); 
+    			pm.put("city_name", "城市"); 
+    			pm.put("show1", "AD曝光1+UV"); 
+    			pm.put("show2", "AD曝光2+UV"); 
+    			pm.put("show3", "AD曝光3+UV"); 
+    			pm.put("show4", "AD曝光4+UV"); 
+    			pm.put("show5", "AD曝光5+UV"); 
+    			pm.put("show6", "AD曝光6+以上UV"); 
+    			pm.put("click_yt", "优土点击(次)"); 
+    			pm.put("click_admaster", "AD点击(次)"); 
+    			pm.put("click1", "AD点击1+UV"); 
+    			pm.put("click2", "AD点击2+UV"); 
+    			pm.put("click3", "AD点击3+UV"); 
+    			pm.put("click4", "AD点击4+UV"); 
+    			pm.put("click5", "AD点击5+UV"); 
+    			pm.put("click6", "AD点击6+以上UV"); 
+    	try {  
+    		MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) resquest;  
+    		Map<String, MultipartFile> fileMap = multipartRequest.getFileMap();
+    		String xlsName;
+    		String[] name;
+    		for (Map.Entry<String, MultipartFile> entity : fileMap.entrySet()) {   
+    			// 上传文件 
+    			MultipartFile mf = entity.getValue();  
+    			if(mf.getSize() > 4097152){
+    				//(MaxUploadSizeExceededException e) {
+    				return new ResponseEntity(new ReturnBean(false,"上传失败,文件大小超过2M限制"), HttpStatus.OK);
+    			}
+    			xlsName = mf.getOriginalFilename();
+    			//文件不能为空
+    			Assert.notNull(xlsName);
+    			
+    			name = xlsName.split("\\.");
+    			//验证文件格式
+    			if("xls".equals(name[1])){
+    				XxxExcelUtilMapping excelutil = new XxxExcelUtilMapping(RandFFutrueBean.class);
+    				List entities = excelutil.setExcelInputStream(mf.getInputStream()).setPropertyMapping(pm).getEntities();
+//    				List entities = excelutil.setExcelInputStream(mf.getInputStream()).setImportStartRow(-1).setPropertyMapping(pm).getEntitiesHasNoHeader(1);
+    				System.out.println(entities.size());
+//    				处理文件
+    				return new ResponseEntity(new ReturnBean(true,"上传成功"), HttpStatus.OK);
+    			}else{
+    				return new ResponseEntity("上传失败,文件大小超过2M限制", HttpStatus.OK);
+    			}
+    		}  
+    	} catch (IOException e) {
+    		e.printStackTrace();
+    		return new ResponseEntity(new ReturnBean(false,"上传成功"), HttpStatus.OK);
+    	} 
+    	
+    	return null;
+    }
+    /** 导入，导出
+     * @param resquest
+     * @param response
+     * @return
+     */
+    @RequestMapping(value="mapperExcel.do")
+    public ResponseEntity<byte[]> mapperExcel_in_out(HttpServletRequest resquest,HttpServletResponse response){
+    	//初始化表头映射，因为映射的标题是符合标题行目前不支持，所以直接使用顺序映射
+		LinkedHashMap<String, String> pm = new LinkedHashMap<String, String>();
+		pm.put("ad_contract_id", "订单ID");
+		pm.put("contract_name", "订单名称");
+		pm.put("ad_cast_id", "投放ID"); 
+		pm.put("cast_name", "订单名称"); 
+		pm.put("ad_creative_id", "素材ID"); 
+		pm.put("creative_name", "素材名称"); 
+		pm.put("province_name", "省份"); 
+		pm.put("city_name", "城市"); 
+		pm.put("show1", "AD曝光1+UV"); 
+		pm.put("show2", "AD曝光2+UV"); 
+		pm.put("show3", "AD曝光3+UV"); 
+		pm.put("show4", "AD曝光4+UV"); 
+		pm.put("show5", "AD曝光5+UV"); 
+		pm.put("show6", "AD曝光6+以上UV"); 
+		pm.put("click_yt", "优土点击(次)"); 
+		pm.put("click_admaster", "AD点击(次)"); 
+		pm.put("click1", "AD点击1+UV"); 
+		pm.put("click2", "AD点击2+UV"); 
+		pm.put("click3", "AD点击3+UV"); 
+		pm.put("click4", "AD点击4+UV"); 
+		pm.put("click5", "AD点击5+UV"); 
+		pm.put("click6", "AD点击6+以上UV"); 
+    	try {  
+    		MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) resquest;  
+    		Map<String, MultipartFile> fileMap = multipartRequest.getFileMap();
+    		String xlsName;
+    		String[] name;
+    		for (Map.Entry<String, MultipartFile> entity : fileMap.entrySet()) {   
+    			// 上传文件 
+    			MultipartFile mf = entity.getValue();  
+    			if(mf.getSize() > 4097152){
+    				//(MaxUploadSizeExceededException e) {
+//    				return new ResponseEntity(new ReturnBean(false,"上传失败,文件大小超过2M限制"), HttpStatus.OK);
+    			}
+    			xlsName = mf.getOriginalFilename();
+    			//文件不能为空
+    			Assert.notNull(xlsName);
+    			
+    			name = xlsName.split("\\.");
+    			//验证文件格式
+    			if("xls".equals(name[1]) || "xlsx".equals(name[1])){
+    				//处理文件
+    				XxxExcelUtilMapping importUtil = new XxxExcelUtilMapping(RandFFutrueBean.class);
+    				List entities = importUtil.setExcelInputStream(mf.getInputStream()).setPropertyMapping(pm).getEntities();
+//    				
+    				XxxExcelUtilMapping exportUtil = new XxxExcelUtilMapping(RandFFutrueBean.class);
+    				exportUtil.setSheetName("pinci").setPropertyMapping(pm).createExcel(entities);
+    				
+    				String fileName="pinci.xlsx";  
+    				HttpHeaders header = new HttpHeaders();
+    				try {
+    					header.setContentDispositionFormData("attachment", new String(fileName.getBytes("UTF-8"),"ISO8859-1"));
+    				} catch (Exception e) {
+    					logger.error(e.getMessage());
+    				}
+    				//二进制数据
+    				header.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+    				return new ResponseEntity<byte[]>(exportUtil.toByteArray(),header,HttpStatus.CREATED);
+//    				return new ResponseEntity(new ReturnBean(true,"上传成功"), HttpStatus.OK);
+    			}else{
+//    				return new ResponseEntity("请选择有效excel文件", HttpStatus.OK);
+    			}
+    		}  
+    	} catch (IOException e) {
+    		e.printStackTrace();
+//    		return new ResponseEntity(new ReturnBean(false,"上传成功"), HttpStatus.OK);
+    	} 
+    	return null;
+    	
+    }
     /** 导入，导出
      * @param resquest
      * @param response
@@ -400,7 +550,7 @@ public class POIAction {
     				excel.setExcelInputStream(mf.getInputStream()).setImportStartRow(1);
     				
     				long startTime = System.currentTimeMillis();
-    				List<RandFFutrueBean> list = excel.excel2ObjByAnnotation(RandFFutrueBean.class);
+    				List<RandFFutrueBean> list = excel.getEntities(RandFFutrueBean.class);
     				System.out.println("list.size="+list.size());
     				logger.error("【fastexcel耗时】"+ (System.currentTimeMillis()-startTime) + "ms");
     				

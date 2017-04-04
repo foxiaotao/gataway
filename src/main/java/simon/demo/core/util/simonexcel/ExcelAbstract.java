@@ -323,4 +323,12 @@ public abstract class ExcelAbstract  implements Closeable {
         return out.toByteArray();
     }
  
+    public void closeWorkbook(){
+    	
+    }
+    
+    protected abstract void formatContentCell(Cell cell, int rowIndex, int colIndex, Object value);
+
+    protected abstract void formatHeadCell(Cell cell, int rowIndex, int colIndex);
+
 }

@@ -2,7 +2,14 @@ package simon.demo.core.util.simonexcel;
 
 import org.apache.poi.ss.usermodel.Cell;
 
-public class XxxExcelUtil extends ExcelUtilAnnotation {
+import simon.demo.core.util.fastexcel.RandFFutrueBean;
+
+public class XxxExcelUtilMapping<T> extends ExcelUtilMapping<T> {
+
+
+	public XxxExcelUtilMapping(Class<T> c) {
+		super(c);
+	}
 
 	@Override
     protected void formatContentCell(Cell cell, int rowIndex, int colIndex,Object value) {
