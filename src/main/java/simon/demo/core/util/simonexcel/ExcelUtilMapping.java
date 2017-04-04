@@ -1,5 +1,6 @@
 package simon.demo.core.util.simonexcel;
 import java.beans.BeanInfo;
+import java.beans.IntrospectionException;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.io.File;
@@ -7,25 +8,19 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.hssf.usermodel.HSSFCell;
-import org.apache.poi.hssf.usermodel.HSSFRow;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
@@ -34,13 +29,6 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.springframework.util.Assert;
-import org.springframework.util.ReflectionUtils;
-
-import simon.demo.core.util.ExcelUtil;
-import simon.demo.core.util.StringUtil;
-import simon.demo.core.util.excel.AbstractExcelExportor;
-import simon.demo.core.util.fastexcel.RandFFutrueBean;
 
 /**
  * 该类用于帮助解析和填充EXCEL,目前没有分页的实现，所以数据量太大可能导致类存溢出
@@ -65,24 +53,12 @@ import simon.demo.core.util.fastexcel.RandFFutrueBean;
  *
  * @param <T>
  */
-public abstract class ExcelUtilMapping<T> extends ExcelAbstract{
+public abstract class ExcelUtilMapping extends ExcelAbstract{
 	private LinkedHashMap<String, String> propertyMapping;
-//	private HSSFSheet sheet;
-	protected Class<T> entityClass;
 	private Map<String, Short> map;
 	private PropertyDescriptor[] propertyDescriptors;
-//	private DateFormat format = new SimpleDateFormat("yyyy-mm-dd HH:mm:ss");
 	private Map<String, ValueConvert> valueMapping = new HashMap<String, ValueConvert>();
 	
-	public ExcelUtilMapping( Class<T> c){
-		entityClass = c;
-			try {
-				BeanInfo beaninfo = Introspector.getBeanInfo(c);
-				this.propertyDescriptors = beaninfo.getPropertyDescriptors();
-			} catch (java.beans.IntrospectionException e1) {
-				e1.printStackTrace();
-			}
-	}
 	/**
 	 * map 字段名 - 表格名 mapping关系
 	 * @param propertyMapping LinkedHashMap
@@ -104,7 +80,7 @@ public abstract class ExcelUtilMapping<T> extends ExcelAbstract{
 	 * @param headIndex
 	 * @return
 	 */
-	public List<T> getEntities(){
+	public <T> List<T> getEntities(Class<T> c){
 		List<T> list = new LinkedList<T>();
 		int num = workbook.getNumberOfSheets();	
 		//迭代excel中的每一个sheet
@@ -120,7 +96,7 @@ public abstract class ExcelUtilMapping<T> extends ExcelAbstract{
 			//System.out.println("sheet.getRow(headIndex)="+sheet.getRow(headIndex));
 			Short[] st = getStatus(headRow);
 			for(int j = headIndex + 1 ; j < rows; j++){
-				list.add(getEntity(sheet.getRow(j), st));
+				list.add(getEntity(sheet.getRow(j), st , c));
 			}
 			
 		}
@@ -130,7 +106,7 @@ public abstract class ExcelUtilMapping<T> extends ExcelAbstract{
 	/**
 	 * 直接数据，没有标题行，所以没有对应关系，linkMap 的顺序 就是excel 列的顺序
 	 */
-	public List<T> getEntitiesHasNoHeader(int startIndex){
+	public <T> List<T> getEntitiesHasNoHeader(int startIndex,Class<T> c){
 		List<T> list = new LinkedList<T>();
 		int num = workbook.getNumberOfSheets();	
 		//迭代excel中的每一个sheet
@@ -140,7 +116,7 @@ public abstract class ExcelUtilMapping<T> extends ExcelAbstract{
 			//System.out.println("sheet.getRow(headIndex)="+sheet.getRow(headIndex));
 			Short[] st = getStatus(null);
 			for(int j = startIndex ; j < rows; j++){
-				list.add(getEntity(sheet.getRow(j), st));
+				list.add(getEntity(sheet.getRow(j), st, c));
 			}
 		}
 		return list;
@@ -205,10 +181,11 @@ public abstract class ExcelUtilMapping<T> extends ExcelAbstract{
 	/**
 	 * 
 	 */
-	private T getEntity(Row row, Short[] status){ 
+	private <T> T getEntity(Row row, Short[] status,Class<T> c){ 
+		setPropertyDescriptors(c);
 		T t = null;
 			try {
-				t = entityClass.newInstance();
+				t = c.newInstance();
 				for(int i = 0; i < propertyDescriptors.length; i++){
 					try{
 						PropertyDescriptor pd = propertyDescriptors[i];
@@ -309,13 +286,24 @@ public abstract class ExcelUtilMapping<T> extends ExcelAbstract{
 			}
 		return t;				
 	}
+	private <T> void setPropertyDescriptors(Class<T> c) {
+		BeanInfo beaninfo;
+		try {
+			beaninfo = Introspector.getBeanInfo(c);
+			this.propertyDescriptors = beaninfo.getPropertyDescriptors();
+		} catch (IntrospectionException e) {
+			logger.error(e.getMessage(),e);
+		}
+	}
+
+
 //===============================================导出=======================================
 //===============================================导出=======================================
 //===============================================导出=======================================
 	
 
-    public ExcelUtilMapping createExcel(List<?> datas) {
-    	
+    public <T> ExcelUtilMapping createExcel(List<?> datas,Class<T> clazz) {
+    	setPropertyDescriptors(clazz);
     	workbook =  new SXSSFWorkbook(5000);
 		if(this.sheetName==null){
 			sheet = workbook.createSheet();

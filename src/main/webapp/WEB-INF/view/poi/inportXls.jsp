@@ -23,16 +23,8 @@
 		<span>选择excel文件：</span><input type="file" name="uploadfile" />
 		<input type="submit" value="上传-下载"/>
 	</form>
-	<h1>=============</h1>
-	<form action="${ctx}/poi/inportXlsShiroFastexcel.do" method="post" enctype="multipart/form-data">
-		<span>选择excel文件：</span><input type="file" name="uploadfile" />
-		<input type="submit" value="上传"/>
-	</form>
-	<h1>=======simonexcel======</h1>
-	<form action="${ctx}/poi/simonexcel.do" method="post" enctype="multipart/form-data">
-		<span>选择excel文件：</span><input type="file" name="uploadfile" />
-		<input type="submit" value="上传-下载"/>
-	</form>
+	
+	
 	<h1>=======exportModelMapBySimonExcelUtil======</h1>
 	<form action="${ctx}/poi/exportModelMapUtil.do" method="post">
 		<input type="submit" value="下载"/>
@@ -45,6 +37,11 @@
 	<h1>=======mapperExcel_in_out======</h1>
 	<form action="${ctx}/poi/mapperExcel.do" method="post"  enctype="multipart/form-data">
 	<span>选择excel文件：</span><input type="file" name="uploadfile" />
+		<input type="submit" value="上传-下载"/>
+	</form>
+	<h1>=======simonexcel_annotation======</h1>
+	<form action="${ctx}/poi/simonexcel_annotation.do" method="post" enctype="multipart/form-data">
+		<span>选择excel文件：</span><input type="file" name="uploadfile" />
 		<input type="submit" value="上传-下载"/>
 	</form>
 </body>

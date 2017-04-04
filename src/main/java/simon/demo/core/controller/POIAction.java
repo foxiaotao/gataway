@@ -295,152 +295,7 @@ public class POIAction {
     	
 		return null;
     }
-    /**非 shiro环境
-     * @param resquest
-     * @param response
-     * @return
-     */
-    @RequestMapping(value="inportMapper.do")
-    public ResponseEntity inportMapper(HttpServletRequest resquest,HttpServletResponse response){
-    	//初始化表头映射，因为映射的标题是符合标题行目前不支持，所以直接使用顺序映射
-    			LinkedHashMap<String, String> pm = new LinkedHashMap<String, String>();
-    			pm.put("ad_contract_id", "订单ID");
-    			pm.put("contract_name", "订单名称");
-    			pm.put("ad_cast_id", "投放ID"); 
-    			pm.put("cast_name", "订单名称"); 
-    			pm.put("ad_creative_id", "素材ID"); 
-    			pm.put("creative_name", "素材名称"); 
-    			pm.put("province_name", "省份"); 
-    			pm.put("city_name", "城市"); 
-    			pm.put("show1", "AD曝光1+UV"); 
-    			pm.put("show2", "AD曝光2+UV"); 
-    			pm.put("show3", "AD曝光3+UV"); 
-    			pm.put("show4", "AD曝光4+UV"); 
-    			pm.put("show5", "AD曝光5+UV"); 
-    			pm.put("show6", "AD曝光6+以上UV"); 
-    			pm.put("click_yt", "优土点击(次)"); 
-    			pm.put("click_admaster", "AD点击(次)"); 
-    			pm.put("click1", "AD点击1+UV"); 
-    			pm.put("click2", "AD点击2+UV"); 
-    			pm.put("click3", "AD点击3+UV"); 
-    			pm.put("click4", "AD点击4+UV"); 
-    			pm.put("click5", "AD点击5+UV"); 
-    			pm.put("click6", "AD点击6+以上UV"); 
-    	try {  
-    		MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) resquest;  
-    		Map<String, MultipartFile> fileMap = multipartRequest.getFileMap();
-    		String xlsName;
-    		String[] name;
-    		for (Map.Entry<String, MultipartFile> entity : fileMap.entrySet()) {   
-    			// 上传文件 
-    			MultipartFile mf = entity.getValue();  
-    			if(mf.getSize() > 4097152){
-    				//(MaxUploadSizeExceededException e) {
-    				return new ResponseEntity(new ReturnBean(false,"上传失败,文件大小超过2M限制"), HttpStatus.OK);
-    			}
-    			xlsName = mf.getOriginalFilename();
-    			//文件不能为空
-    			Assert.notNull(xlsName);
-    			
-    			name = xlsName.split("\\.");
-    			//验证文件格式
-    			if("xls".equals(name[1])){
-    				XxxExcelUtilMapping excelutil = new XxxExcelUtilMapping(RandFFutrueBean.class);
-    				List entities = excelutil.setExcelInputStream(mf.getInputStream()).setPropertyMapping(pm).getEntities();
-//    				List entities = excelutil.setExcelInputStream(mf.getInputStream()).setImportStartRow(-1).setPropertyMapping(pm).getEntitiesHasNoHeader(1);
-    				System.out.println(entities.size());
-//    				处理文件
-    				return new ResponseEntity(new ReturnBean(true,"上传成功"), HttpStatus.OK);
-    			}else{
-    				return new ResponseEntity("上传失败,文件大小超过2M限制", HttpStatus.OK);
-    			}
-    		}  
-    	} catch (IOException e) {
-    		e.printStackTrace();
-    		return new ResponseEntity(new ReturnBean(false,"上传成功"), HttpStatus.OK);
-    	} 
-    	
-    	return null;
-    }
-    /** 导入，导出
-     * @param resquest
-     * @param response
-     * @return
-     */
-    @RequestMapping(value="mapperExcel.do")
-    public ResponseEntity<byte[]> mapperExcel_in_out(HttpServletRequest resquest,HttpServletResponse response){
-    	//初始化表头映射，因为映射的标题是符合标题行目前不支持，所以直接使用顺序映射
-		LinkedHashMap<String, String> pm = new LinkedHashMap<String, String>();
-		pm.put("ad_contract_id", "订单ID");
-		pm.put("contract_name", "订单名称");
-		pm.put("ad_cast_id", "投放ID"); 
-		pm.put("cast_name", "订单名称"); 
-		pm.put("ad_creative_id", "素材ID"); 
-		pm.put("creative_name", "素材名称"); 
-		pm.put("province_name", "省份"); 
-		pm.put("city_name", "城市"); 
-		pm.put("show1", "AD曝光1+UV"); 
-		pm.put("show2", "AD曝光2+UV"); 
-		pm.put("show3", "AD曝光3+UV"); 
-		pm.put("show4", "AD曝光4+UV"); 
-		pm.put("show5", "AD曝光5+UV"); 
-		pm.put("show6", "AD曝光6+以上UV"); 
-		pm.put("click_yt", "优土点击(次)"); 
-		pm.put("click_admaster", "AD点击(次)"); 
-		pm.put("click1", "AD点击1+UV"); 
-		pm.put("click2", "AD点击2+UV"); 
-		pm.put("click3", "AD点击3+UV"); 
-		pm.put("click4", "AD点击4+UV"); 
-		pm.put("click5", "AD点击5+UV"); 
-		pm.put("click6", "AD点击6+以上UV"); 
-    	try {  
-    		MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) resquest;  
-    		Map<String, MultipartFile> fileMap = multipartRequest.getFileMap();
-    		String xlsName;
-    		String[] name;
-    		for (Map.Entry<String, MultipartFile> entity : fileMap.entrySet()) {   
-    			// 上传文件 
-    			MultipartFile mf = entity.getValue();  
-    			if(mf.getSize() > 4097152){
-    				//(MaxUploadSizeExceededException e) {
-//    				return new ResponseEntity(new ReturnBean(false,"上传失败,文件大小超过2M限制"), HttpStatus.OK);
-    			}
-    			xlsName = mf.getOriginalFilename();
-    			//文件不能为空
-    			Assert.notNull(xlsName);
-    			
-    			name = xlsName.split("\\.");
-    			//验证文件格式
-    			if("xls".equals(name[1]) || "xlsx".equals(name[1])){
-    				//处理文件
-    				XxxExcelUtilMapping importUtil = new XxxExcelUtilMapping(RandFFutrueBean.class);
-    				List entities = importUtil.setExcelInputStream(mf.getInputStream()).setPropertyMapping(pm).getEntities();
-//    				
-    				XxxExcelUtilMapping exportUtil = new XxxExcelUtilMapping(RandFFutrueBean.class);
-    				exportUtil.setSheetName("pinci").setPropertyMapping(pm).createExcel(entities);
-    				
-    				String fileName="pinci.xlsx";  
-    				HttpHeaders header = new HttpHeaders();
-    				try {
-    					header.setContentDispositionFormData("attachment", new String(fileName.getBytes("UTF-8"),"ISO8859-1"));
-    				} catch (Exception e) {
-    					logger.error(e.getMessage());
-    				}
-    				//二进制数据
-    				header.setContentType(MediaType.APPLICATION_OCTET_STREAM);
-    				return new ResponseEntity<byte[]>(exportUtil.toByteArray(),header,HttpStatus.CREATED);
-//    				return new ResponseEntity(new ReturnBean(true,"上传成功"), HttpStatus.OK);
-    			}else{
-//    				return new ResponseEntity("请选择有效excel文件", HttpStatus.OK);
-    			}
-    		}  
-    	} catch (IOException e) {
-    		e.printStackTrace();
-//    		return new ResponseEntity(new ReturnBean(false,"上传成功"), HttpStatus.OK);
-    	} 
-    	return null;
-    	
-    }
+    
     /** 导入，导出
      * @param resquest
      * @param response
@@ -515,14 +370,162 @@ public class POIAction {
     	return null;
     	
     }
+    
+    /**非 shiro环境
+     * @param resquest
+     * @param response
+     * @return
+     */
+    @RequestMapping(value="inportMapper.do")
+    public ResponseEntity inportMapper(HttpServletRequest resquest,HttpServletResponse response){
+    	//初始化表头映射，因为映射的标题是符合标题行目前不支持，所以直接使用顺序映射
+    			LinkedHashMap<String, String> pm = new LinkedHashMap<String, String>();
+    			pm.put("ad_contract_id", "订单ID");
+    			pm.put("contract_name", "订单名称");
+    			pm.put("ad_cast_id", "投放ID"); 
+    			pm.put("cast_name", "订单名称"); 
+    			pm.put("ad_creative_id", "素材ID"); 
+    			pm.put("creative_name", "素材名称"); 
+    			pm.put("province_name", "省份"); 
+    			pm.put("city_name", "城市"); 
+    			pm.put("show1", "AD曝光1+UV"); 
+    			pm.put("show2", "AD曝光2+UV"); 
+    			pm.put("show3", "AD曝光3+UV"); 
+    			pm.put("show4", "AD曝光4+UV"); 
+    			pm.put("show5", "AD曝光5+UV"); 
+    			pm.put("show6", "AD曝光6+以上UV"); 
+    			pm.put("click_yt", "优土点击(次)"); 
+    			pm.put("click_admaster", "AD点击(次)"); 
+    			pm.put("click1", "AD点击1+UV"); 
+    			pm.put("click2", "AD点击2+UV"); 
+    			pm.put("click3", "AD点击3+UV"); 
+    			pm.put("click4", "AD点击4+UV"); 
+    			pm.put("click5", "AD点击5+UV"); 
+    			pm.put("click6", "AD点击6+以上UV"); 
+    	try {  
+    		MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) resquest;  
+    		Map<String, MultipartFile> fileMap = multipartRequest.getFileMap();
+    		String xlsName;
+    		String[] name;
+    		for (Map.Entry<String, MultipartFile> entity : fileMap.entrySet()) {   
+    			// 上传文件 
+    			MultipartFile mf = entity.getValue();  
+    			if(mf.getSize() > 4097152){
+    				//(MaxUploadSizeExceededException e) {
+    				return new ResponseEntity(new ReturnBean(false,"上传失败,文件大小超过2M限制"), HttpStatus.OK);
+    			}
+    			xlsName = mf.getOriginalFilename();
+    			//文件不能为空
+    			Assert.notNull(xlsName);
+    			
+    			name = xlsName.split("\\.");
+    			//验证文件格式
+    			if("xls".equals(name[1])){
+    				XxxExcelUtilMapping excelutil = new XxxExcelUtilMapping();
+    				List entities = excelutil.setExcelInputStream(mf.getInputStream()).setPropertyMapping(pm).getEntities(RandFFutrueBean.class);
+//    				List entities = excelutil.setExcelInputStream(mf.getInputStream()).setImportStartRow(-1).setPropertyMapping(pm).getEntitiesHasNoHeader(1);
+    				System.out.println(entities.size());
+//    				处理文件
+    				return new ResponseEntity(new ReturnBean(true,"上传成功"), HttpStatus.OK);
+    			}else{
+    				return new ResponseEntity("上传失败,文件大小超过2M限制", HttpStatus.OK);
+    			}
+    		}  
+    	} catch (IOException e) {
+    		e.printStackTrace();
+    		return new ResponseEntity(new ReturnBean(false,"上传成功"), HttpStatus.OK);
+    	} 
+    	
+    	return null;
+    }
+    /** 导入，导出
+     * @param resquest
+     * @param response
+     * @return
+     */
+    @RequestMapping(value="mapperExcel.do")
+    public ResponseEntity<byte[]> mapperExcel_in_out(HttpServletRequest resquest,HttpServletResponse response){
+    	//初始化表头映射，因为映射的标题是符合标题行目前不支持，所以直接使用顺序映射
+		LinkedHashMap<String, String> pm = new LinkedHashMap<String, String>();
+		pm.put("ad_contract_id", "订单ID");
+		pm.put("contract_name", "订单名称");
+		pm.put("ad_cast_id", "投放ID"); 
+		pm.put("cast_name", "订单名称"); 
+		pm.put("ad_creative_id", "素材ID"); 
+		pm.put("creative_name", "素材名称"); 
+		pm.put("province_name", "省份"); 
+		pm.put("city_name", "城市"); 
+		pm.put("show1", "AD曝光1+UV"); 
+		pm.put("show2", "AD曝光2+UV"); 
+		pm.put("show3", "AD曝光3+UV"); 
+		pm.put("show4", "AD曝光4+UV"); 
+		pm.put("show5", "AD曝光5+UV"); 
+		pm.put("show6", "AD曝光6+以上UV"); 
+		pm.put("click_yt", "优土点击(次)"); 
+		pm.put("click_admaster", "AD点击(次)"); 
+		pm.put("click1", "AD点击1+UV"); 
+		pm.put("click2", "AD点击2+UV"); 
+		pm.put("click3", "AD点击3+UV"); 
+		pm.put("click4", "AD点击4+UV"); 
+		pm.put("click5", "AD点击5+UV"); 
+		pm.put("click6", "AD点击6+以上UV"); 
+    	try {  
+    		MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) resquest;  
+    		Map<String, MultipartFile> fileMap = multipartRequest.getFileMap();
+    		String xlsName;
+    		String[] name;
+    		for (Map.Entry<String, MultipartFile> entity : fileMap.entrySet()) {   
+    			// 上传文件 
+    			MultipartFile mf = entity.getValue();  
+    			if(mf.getSize() > 4097152){
+    				//(MaxUploadSizeExceededException e) {
+//    				return new ResponseEntity(new ReturnBean(false,"上传失败,文件大小超过2M限制"), HttpStatus.OK);
+    			}
+    			xlsName = mf.getOriginalFilename();
+    			//文件不能为空
+    			Assert.notNull(xlsName);
+    			
+    			name = xlsName.split("\\.");
+    			//验证文件格式
+    			if("xls".equals(name[1]) || "xlsx".equals(name[1])){
+    				//处理文件
+    				XxxExcelUtilMapping importUtil = new XxxExcelUtilMapping();
+    				List entities = importUtil.setExcelInputStream(mf.getInputStream()).setPropertyMapping(pm).getEntities(RandFFutrueBean.class);
+//    				
+    				XxxExcelUtilMapping exportUtil = new XxxExcelUtilMapping();
+    				exportUtil.setSheetName("pinci").setPropertyMapping(pm).createExcel(entities,RandFFutrueBean.class);
+    				
+    				String fileName="pinci.xlsx";  
+    				HttpHeaders header = new HttpHeaders();
+    				try {
+    					header.setContentDispositionFormData("attachment", new String(fileName.getBytes("UTF-8"),"ISO8859-1"));
+    				} catch (Exception e) {
+    					logger.error(e.getMessage());
+    				}
+    				//二进制数据
+    				header.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+    				return new ResponseEntity<byte[]>(exportUtil.toByteArray(),header,HttpStatus.CREATED);
+//    				return new ResponseEntity(new ReturnBean(true,"上传成功"), HttpStatus.OK);
+    			}else{
+//    				return new ResponseEntity("请选择有效excel文件", HttpStatus.OK);
+    			}
+    		}  
+    	} catch (IOException e) {
+    		e.printStackTrace();
+//    		return new ResponseEntity(new ReturnBean(false,"上传成功"), HttpStatus.OK);
+    	} 
+    	return null;
+    	
+    }
+ 
     /** 导入，导出
      * @param resquest
      * @param response
      * @return
      */
     @SuppressWarnings("resource")
-	@RequestMapping(value="simonexcel.do")
-    public ResponseEntity<byte[]> simonexcel(HttpServletRequest resquest,HttpServletResponse response){
+	@RequestMapping(value="simonexcel_annotation.do")
+    public ResponseEntity<byte[]> simonexcel_annotation(HttpServletRequest resquest,HttpServletResponse response){
     	try {  
     		MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) resquest;  
     		Map<String, MultipartFile> fileMap = multipartRequest.getFileMap();
@@ -556,16 +559,7 @@ public class POIAction {
     				
     				
     				XxxExcelUtil export = new XxxExcelUtil();
-    				RandFFutrueBean bean = list.get(0);
-    				List<RandFFutrueBean> data = new ArrayList<RandFFutrueBean>();
-    				for (int i = 0; i < 20; i++) {
-    					
-    					RandFFutrueBean b = new RandFFutrueBean();
-    					BeanUtils.copyProperties(bean, b);
-    					b.setAd_contract_id(StringUtil.randomString(6));
-    					data.add(b);
-    				}
-    				export.createExcel(data);
+    				export.createExcel(list);
     				
     				String fileName="产品管理2.xls";  
     				HttpHeaders header = new HttpHeaders();
@@ -657,6 +651,65 @@ public class POIAction {
     	header.setContentType(MediaType.APPLICATION_OCTET_STREAM);
     	return new ResponseEntity<byte[]>(excel.toByteArray(),header,HttpStatus.CREATED);
     }
+    
+    
+    
+    @RequestMapping(value="exportModelList.do")
+    public ResponseEntity<byte[]> exportModelList(){
+    	ServletRequest request = ((WebSubject)SecurityUtils.getSubject()).getServletRequest();   
+    	HttpSession httpSession = ((HttpServletRequest)request).getSession();   
+    	logger.debug("httpSession.getServletContext():"+httpSession.getServletContext());  
+    	String basePath = httpSession.getServletContext().getRealPath("/WEB-INF");
+    	String filePath = basePath+"/excelModel/ZZSScottareModelLsit.xls";
+    	
+    	//data
+    	//封装整个excel所需数据,key为sheet名字,String
+    	Map<String,List<String>> fieldData = new HashMap<String, List<String>>();
+    	//封装一个sheet的数据
+    	List<String> cellData = new ArrayList<String>();
+    	cellData.add("附件1 值 税 纳 增  税  申 报 表3");
+    	cellData.add("税款所属时间：自2016 ");
+    	cellData.add("填表日期： 2016 年 12  月  30  日");
+    	cellData.add("金额单位：10000.00元 至角分");
+    	cellData.add("税款所属时间：自2015 ");
+    	cellData.add("填表日期： 2015 年 12  月  30  日");
+    	cellData.add("金额单位：10000.01元 至角分");
+    	fieldData.put("首页", cellData);
+    	
+    	//sheet2
+    	cellData = new ArrayList<String>();
+    	cellData.add("sheet2附件1 值 税 纳 增  税  申 报 表3");
+    	cellData.add("sheet2税款所属时间：自2016 ");
+    	cellData.add("sheet2填表日期： 2016 年 12  月  30  日");
+    	cellData.add("sheet2金额单位：10000.00元 至角分");
+    	cellData.add("sheet2税款所属时间：自2015 ");
+    	cellData.add("sheet2填表日期： 2015 年 12  月  30  日");
+    	cellData.add("sheet2金额单位：10000.01元 至角分");
+    	fieldData.put("Sheet2", cellData);
+    	//data
+    	
+    	try {
+    		File f = new File(filePath);
+    		if(!f.exists()){
+    			logger.error("文件路径不存在");
+    			return null;
+    		}
+    	} catch (Exception e1) {
+    		logger.error("文件路径不存在");
+    		return null;
+    	}
+    	ExcelByModelUtil excel = new ExcelByModelUtil();
+    	excel.setModelPath(filePath).setRowCellCount(54, 40).writeDataByList(fieldData);
+    	
+    	HttpHeaders header = new HttpHeaders();
+    	try {
+    		header.setContentDispositionFormData("attachment", new String("增值税list.xls".getBytes("UTF-8"),"ISO8859-1"));
+    	} catch (UnsupportedEncodingException e) {
+    		logger.error(e.getMessage());
+    	}
+    	header.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+    	return new ResponseEntity<byte[]>(excel.toByteArray(),header,HttpStatus.CREATED);
+    }
     @RequestMapping(value="exportModelMapUtil.do")
     public ResponseEntity<byte[]> exportModelMapBySimonExcelUtil(){
     	ServletRequest request = ((WebSubject)SecurityUtils.getSubject()).getServletRequest();   
@@ -719,63 +772,4 @@ public class POIAction {
     	header.setContentType(MediaType.APPLICATION_OCTET_STREAM);
     	return new ResponseEntity<byte[]>(excel.toByteArray(),header,HttpStatus.CREATED);
     }
-    
-    
-    @RequestMapping(value="exportModelList.do")
-    public ResponseEntity<byte[]> exportModelList(){
-    	ServletRequest request = ((WebSubject)SecurityUtils.getSubject()).getServletRequest();   
-    	HttpSession httpSession = ((HttpServletRequest)request).getSession();   
-    	logger.debug("httpSession.getServletContext():"+httpSession.getServletContext());  
-    	String basePath = httpSession.getServletContext().getRealPath("/WEB-INF");
-    	String filePath = basePath+"/excelModel/ZZSScottareModelLsit.xls";
-    	
-    	//data
-    	//封装整个excel所需数据,key为sheet名字,String
-    	Map<String,List<String>> fieldData = new HashMap<String, List<String>>();
-    	//封装一个sheet的数据
-    	List<String> cellData = new ArrayList<String>();
-    	cellData.add("附件1 值 税 纳 增  税  申 报 表3");
-    	cellData.add("税款所属时间：自2016 ");
-    	cellData.add("填表日期： 2016 年 12  月  30  日");
-    	cellData.add("金额单位：10000.00元 至角分");
-    	cellData.add("税款所属时间：自2015 ");
-    	cellData.add("填表日期： 2015 年 12  月  30  日");
-    	cellData.add("金额单位：10000.01元 至角分");
-    	fieldData.put("首页", cellData);
-    	
-    	//sheet2
-    	cellData = new ArrayList<String>();
-    	cellData.add("sheet2附件1 值 税 纳 增  税  申 报 表3");
-    	cellData.add("sheet2税款所属时间：自2016 ");
-    	cellData.add("sheet2填表日期： 2016 年 12  月  30  日");
-    	cellData.add("sheet2金额单位：10000.00元 至角分");
-    	cellData.add("sheet2税款所属时间：自2015 ");
-    	cellData.add("sheet2填表日期： 2015 年 12  月  30  日");
-    	cellData.add("sheet2金额单位：10000.01元 至角分");
-    	fieldData.put("Sheet2", cellData);
-    	//data
-    	
-    	try {
-    		File f = new File(filePath);
-    		if(!f.exists()){
-    			logger.error("文件路径不存在");
-    			return null;
-    		}
-    	} catch (Exception e1) {
-    		logger.error("文件路径不存在");
-    		return null;
-    	}
-    	ExcelByModelUtil excel = new ExcelByModelUtil();
-    	excel.setModelPath(filePath).setRowCellCount(54, 40).writeDataByList(fieldData);
-    	
-    	HttpHeaders header = new HttpHeaders();
-    	try {
-    		header.setContentDispositionFormData("attachment", new String("增值税list.xls".getBytes("UTF-8"),"ISO8859-1"));
-    	} catch (UnsupportedEncodingException e) {
-    		logger.error(e.getMessage());
-    	}
-    	header.setContentType(MediaType.APPLICATION_OCTET_STREAM);
-    	return new ResponseEntity<byte[]>(excel.toByteArray(),header,HttpStatus.CREATED);
-    }
-    
 }
